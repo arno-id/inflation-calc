@@ -15,7 +15,7 @@ var Calculator = function () {
 
         this.kshRound = function(num, rounding){
           return Math.round(num * rounding) / rounding ;
-          //180.61100000000002    -----    
+       
         }
         this.init = function () {
             this.loadData();
@@ -86,7 +86,7 @@ var Calculator = function () {
             $.ajax({
                 url: this.settings.url
             }).done(function (data) {
-                data.split("\r\n").forEach(el => {
+                data.split("\n").forEach(el => {
                     if(el.trim().length == 0) return;
                     
                     let element = el.split(";");
