@@ -14,6 +14,7 @@ var Calculator = function () {
         this.InflationData = new Array(),
 
         this.kshRound = function(num, rounding){
+          return num;
           return Math.round(num * rounding) / rounding ;
        
         }
@@ -30,21 +31,22 @@ var Calculator = function () {
 
             let sumweight = 0.0;
             sumweight = selNodes.reduce(function (sumweight, o) {
-                return sumweight + parseFloat(o.data.suly);
+                return sumweight +  (o.data.suly);
             }, 0)
-            console.log(sumweight);
+          
             let finalInf = 0;
             if (selNodes.length > 0) {
                 selNodes.forEach(x => {
                     finalInf += kshRound(  x.data.infla * x.data.suly,10);
-                    console.log(x.data.infla + "*" + x.data.suly + " = "+ x.data.infla * x.data.suly)
-                    console.log("summa:"  + kshRound(  x.data.infla * x.data.suly,1))
+                  //  console.log(x.data.infla + "*" + x.data.suly + " = "+ x.data.infla * x.data.suly)
+                   // console.log("summa:"  + kshRound(  x.data.infla * x.data.suly,1))
                 });
                 console.log(finalInf)
+                console.log(sumweight + " avagy" + kshRound(sumweight,100))
                 
-                finalInf /= sumweight;
+                finalInf /= kshRound(sumweight,100);
             }
-            $('#inflacio').text(   kshRound ( finalInf,10   ));
+            $('#inflacio').text(   Math.round ( finalInf * 10   ) / 10);
         },
 
         this.initTree = function () {
@@ -92,7 +94,7 @@ var Calculator = function () {
                     let element = el.split(";");
                     let id = element[0];
                     let text = element[1].trim().replace("\"", "");
-                    let suly = element[2];
+                    let suly = parseFloat(element[2]);
                     let infla = element[3];
  
                     if (id == "" || id == null || id.indexOf("–") > -1 || id.indexOf("-") > -1) { }
