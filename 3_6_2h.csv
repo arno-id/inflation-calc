@@ -1,0 +1,185 @@
+﻿100;Sertéshús;1.340;120.7
+101;Marhahús;0.091;106.9
+102;Egyéb hús;0.019;102.4
+103;Belsőségek;0.142;109.0
+104;Baromfihús;1.111;105.0
+105;Szalámi, szárazkolbász, sonka;0.938;112.6
+106;Párizsi felvágott, kolbász;1.119;122.0
+107;Húskonzerv;0.107;108.3
+108;Hal;0.162;106.0
+109;Halkonzerv;0.076;106.1
+10;Hús, hal, készítmények;5.105;114.5
+110;Tojás;0.489;105.6
+111;Tej;1.178;108.2
+112;Sajt;0.616;103.0
+113;Tejtermékek (sajt nélkül);1.553;106.3
+11;Tej, tejtermék, tojás;3.836;106.2
+120;Vaj, vajkrém;0.145;99.5
+121;Sertészsiradék;0.046;113.3
+122;Szalonna;0.040;122.9
+123;Étolaj;0.349;101.5
+124;Margarin;0.213;101.0
+12;Zsiradékok;0.793;102.6
+130;Liszt;0.233;106.8
+131;Rizs, hántolmányok;0.246;102.4
+132;Kenyér;1.039;108.1
+133;Péksütemények;0.735;106.9
+134;Száraztészta;0.318;98.7
+135;Cukor;0.279;115.0
+136;Csokoládé, kakaó;0.635;101.2
+137;Cukrászáru, jégkrém;0.265;103.8
+138;Édesipari lisztesáru;0.656;98.4
+139;Cukorka, méz;0.256;103.2
+13;Cereáliák, édességek;4.662;104.5
+140;Burgonya;0.350;98.4
+141;Friss zöldség;1.176;105.6
+142;Friss hazai és déligyümölcs;1.271;139.0
+143;Gyümölcs-, zöldséglé;0.657;102.2
+144;Tartósított zöldség;0.323;107.3
+145;Tartósított gyümölcs;0.079;107.0
+146;Száraz hüvelyesek;0.053;107.7
+147;Dió, mák, mogyoró;0.216;100.6
+14;Zöldség, gyümölcs, burgonya;4.125;114.5
+150;Tartósított húsos ételek;0.164;105.2
+151;Tartósított hústalan ételek;0.247;101.5
+152;Fűszerek, ételízesítők;0.488;104.4
+15;Fűszerek és egyéb élelmiszerek;0.899;103.8
+160;Éttermi étkezés (nem előfizetéses);1.572;106.7
+161;Munkahelyi előfizetéses menü étkezés;1.101;108.9
+162;Iskolai étkezés;0.208;103.4
+163;Óvodai, bölcsődei étkezés;0.100;103.2
+164;Büféáruk;1.012;109.1
+16;Házon kívüli étkezés;3.993;107.6
+170;Kávé (bolti);0.462;97.6
+171;Eszpresszókávé;0.297;104.7
+172;Tea;0.103;100.8
+173;Alkoholmentes üdítőitalok;2.126;102.4
+17;Kávé, tea, üdítőitalok;2.988;101.8
+10–17;Élelmiszerek          ;26.401;108.4
+180;Bor;1.140;99.3
+181;Sör;2.556;103.4
+182;Égetett szeszesital;1.367;103.1
+18;Szeszes italok;5.063;102.4
+190;Dohányáruk;5.209;111.1
+19;Dohányáruk;5.209;111.1
+18–19;Szeszes italok, dohányáruk;10.272;106.7
+1;Élelmiszerek, szeszes italok, dohányáruk;36.673;107.9
+300;Szövetek;0.006;104.4
+30;Szövetek;0.006;104.4
+310;Férfi felsőruházat;0.721;99.8
+315;Férfilábbeli;0.390;98.0
+316;Férfi alsóruházat;0.125;100.8
+31;Férfiruházat;1.236;99.3
+320;Női felsőruházat;0.903;98.2
+325;Női lábbeli;0.410;98.8
+326;Női alsóruházat;0.263;101.3
+32;Női ruházat;1.576;98.9
+330;Gyermek felsőruházat;0.266;96.6
+335;Gyermeklábbeli;0.122;95.4
+336;Gyermek alsóruházat;0.052;97.8
+338;Ruházat 3 év alattiaknak;0.158;99.2
+33;Gyermekruházat;0.598;97.2
+340;Divatáru;0.198;100.2
+341;Rövidáru;0.019;103.2
+342;Táska, bőrdíszmű;0.162;100.2
+34;Divatáru, rövidáru, táska;0.379;100.3
+3;Ruházkodási cikkek;3.795;98.9
+400;Szobabútor;0.784;104.3
+401;Konyha és egyéb bútor;0.390;103.7
+402;Hűtőszekrény, fagyasztógép;0.225;102.1
+403;Mosó-, mosogatógép;0.340;98.6
+404;Fűtő és főzőberendezések;0.318;101.1
+405;Porszívógép, klíma;0.135;102.9
+40;Tartós háztartási cikkek;2.192;102.5
+410;Személygépjármű, új;1.791;108.0
+411;Személygépjármű, használt;1.941;93.8
+412;Motorkerékpár;0.174;104.5
+413;Kerékpár;0.026;104.3
+41;Járművek;3.932;101.0
+420;Rádió;0.015;102.5
+421;Televízió;0.585;93.1
+422;Audio, video készülékek;0.163;97.9
+424;Számítógép, fényképezőgép, telefonkészülék;0.606;95.7
+42;Tartós kulturális cikkek;1.369;94.9
+431;Ékszerek;0.210;122.8
+43;Ékszerek;0.210;122.8
+4;Tartós fogyasztási cikkek ;7.703;100.8
+500;Szén;0.040;103.3
+501;Brikett, koksz;0.026;101.6
+502;Tűzifa;0.652;102.8
+504;Távfűtés;0.724;100.0
+505;Elektromos energia;2.202;100.0
+506;Vezetékes gáz;2.687;100.0
+507;Palackos gáz;0.207;100.8
+50;Háztartási energia;6.538;100.3
+510;Lakásjavító, -karbantartó cikkek;0.644;106.1
+51;Lakásjavító, -karbantartó cikkek;0.644;106.1
+520;Szőnyeg, függöny;0.223;102.0
+521;Ágy- és asztalnemű;0.461;100.4
+522;Edény, konyhafelszerelés;0.716;96.7
+523;Lakásfelszerelés, alkatrész, szerszám;0.383;101.6
+524;Barkácsolási kellékek;0.135;99.1
+525;Háztartási fogyóanyagok;0.285;101.0
+526;Mosó- és tisztítószerek;1.009;102.1
+52;Háztartás, lakás cikkei;3.212;100.4
+530;Testápolási cikkek;1.387;100.0
+531;Gyógyszer, gyógyáru;2.720;101.8
+53;Testápolási, egészségügyi cikkek;4.107;101.2
+540;Járműalkatrész;0.474;107.1
+541;Járműüzemanyag;6.674;78.0
+54;Járműalkatrész, -üzemanyag;7.148;79.7
+550;Újság, folyóirat;0.362;107.4
+551;Könyv;0.171;95.4
+552;Tankönyv;0.096;84.0
+553;Tanszer, írószer;0.172;103.4
+554;Sportszer, játék;1.249;97.8
+555;Kép-, hang- és adathordozó;0.019;96.0
+55;Kulturális cikkek;2.069;99.0
+560;Virág, dísznövény;0.258;103.3
+561;Állateledel;0.538;107.3
+56;Virág, állateledel;0.796;106.0
+51–56;Egyéb cikkek, üzemanyagok;17.976;92.3
+5;Háztartási energia, egyéb cikkek;24.514;94.4
+10–56;Termékek mindösszesen       ;72.685;102.1
+601;Ruhajavítás, kölcsönzés;0.084;107.3
+60;Ruhajavítás, készítés, kölcsönzés;0.084;107.3
+610;Lakbér;1.398;104.3
+612;Társasház közös költség;1.123;103.4
+613;Lakásjavítás, -karbantartás;0.438;111.7
+615;Szemétszállítás stb.;0.504;100.0
+616;Vízdíj;0.676;100.0
+617;Csatornadíj;0.816;100.0
+61;Lakbér, lakásszolgáltatás           ;4.955;102.9
+620;Háztartási berendezés javítása;0.066;109.3
+621;Takarítás, mosatás;0.091;109.0
+62;Háztartási szolgáltatás;0.157;109.2
+630;Testápolási szolgáltatás;0.899;106.1
+631;Egészségügyi szolgáltatás;3.561;104.8
+63;Testápolási, egészségügyi szolgáltatás;4.460;105.1
+640;Járműjavítás, -karbantartás;1.159;109.3
+642;Autópályadíj, gépjárműkölcsönzés, parkolás;0.812;78.5
+643;Helyi tömegközlekedés;0.354;100.1
+644;Taxi;0.071;102.1
+645;Utazás munkahelyre, iskolába;0.446;100.0
+646;Utazás egyéb távolsági úti céllal;0.866;94.0
+647;Teherszállítás;0.035;105.2
+64;Közlekedési szolgáltatás;3.743;96.8
+650;Telefon, internet;3.825;103.2
+651;Postai szolgáltatás;0.069;109.5
+65;Hírközlés;3.894;103.3
+660;Kulturális cikkek javítása;0.045;106.4
+661;Oktatási szolgáltatás;2.130;103.4
+662;Színház;0.088;106.6
+663;Mozi;0.067;105.0
+664;Tv-előfizetés;0.381;103.4
+665;Sport-, múzeumi belépők;0.996;104.0
+66;Kulturális és szabadidő szolgáltatás;3.707;103.7
+671;Szerencsejáték;0.989;107.8
+67;Szerencsejáték;0.989;107.8
+681;Üdülés belföldön;1.432;100.4
+682;Üdülés külföldön;0.358;103.4
+68;Üdülési szolgáltatás;1.79;100.9
+690;Fényképészeti szolgáltatás;0.037;103.4
+691;Fel nem sorolt szolgáltatások;3.499;102.3
+69;Egyéb szolgáltatások;3.536;102.4
+6;Szolgáltatások         ;27.315;102.6

@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="utf-8" />
+
+    <script src="assets/jquery-3.5.1.min.js"></script>
+    <script src="assets/jquery-ui.min.js"></script>
+
+    <link href="assets/skin-xp/ui.fancytree.min.css" rel="stylesheet">
+    <link href="assets/bootstrap.min.css" rel="stylesheet">
+    <script src="assets/jquery.fancytree-all.min.js"></script>
+    <script src="assets/jquery.fancytree.grid.js"></script>
+    <script src="assets/code.js"></script>
+    <!-- Initialize the tree when page is loaded -->
+    <script type="text/javascript">
+        $(function () {  // on page load
+            // Create the tree inside the <div id="tree"> element.
+
+            $("#btnMind").click(function () {
+                $.ui.fancytree.getTree("#tree").selectAll(); 
+            });
+
+            $("#btnEgyiksem").click(function () {
+                $.ui.fancytree.getTree("#tree").selectAll(false);               
+            });
+            
+            $("#btnCollapse").click(function () {
+                $.ui.fancytree.getTree("#tree").expandAll(false);
+               
+            });
+             
+            $("#btnExpand").click(function () {
+                $.ui.fancytree.getTree("#tree").expandAll();
+               
+            });
+
+             
+           
+        });
+    </script>
+    <style type="text/css">
+      body{ height: 100vh;}
+        #calc {
+            display: flex; 
+        } 
+        
+        #result {
+            position: sticky;
+            top: 10px;
+            border: 1px dotted #ddd;
+            height: 300px;
+            margin: 0 0 0 10px;
+        }
+
+        thead th {
+           position: sticky;
+            top: 0;
+            background: #ddd;
+        }
+
+        #tree td {
+            border-bottom: 1px dashed #ddd;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="calc">
+        <table id="tree">
+            <thead>
+                <tr> <th> </th> <th>Név</th> <th>Infláció</th> <th style="text-align:center;">Súly</th>   </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td><span></span></td>
+                    <td><input type="text" style="text-align:right;" /></td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+          <div id="result">
+
+            <span>Kiválasztás</span><br />
+            <a href="#" id="btnMind">Mindegyik </a><br />
+            <a href="#" id="btnEgyiksem">Egyik sem</a>
+            <hr />
+
+            <span>Összecsukás / kibontás</span><br />
+            <a href="#" id="btnCollapse">Összecsukás </a><br />         
+            <a href="#" id="btnExpand">Kibontás</a><br />
+            <hr />
+
+              <span>Infláció</span><br />
+              <span id="inflacio"></span>
+
+
+
+          </div>
+      </div>
+    </div>
+</body>
+</html>
