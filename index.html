@@ -17,49 +17,81 @@
             // Create the tree inside the <div id="tree"> element.
 
             $("#btnMind").click(function () {
-                $.ui.fancytree.getTree("#tree").selectAll(); 
+                $.ui.fancytree.getTree("#tree").selectAll();
             });
 
             $("#btnEgyiksem").click(function () {
-                $.ui.fancytree.getTree("#tree").selectAll(false);               
-            });
-            
-            $("#btnCollapse").click(function () {
-                $.ui.fancytree.getTree("#tree").expandAll(false);
-               
-            });
-             
-            $("#btnExpand").click(function () {
-                $.ui.fancytree.getTree("#tree").expandAll();
-               
+                $.ui.fancytree.getTree("#tree").selectAll(false);
             });
 
-             
-           
+            $("#btnCollapse").click(function () {
+                $.ui.fancytree.getTree("#tree").expandAll(false);
+            });
+
+            $("#btnExpand").click(function () {
+                $.ui.fancytree.getTree("#tree").expandAll();
+            });
+
         });
     </script>
     <style type="text/css">
-      body{ height: 100vh;}
+        body {
+            height: 100vh;
+        }
+
         #calc {
-            display: flex; 
-        } 
-        
+            display: flex;
+        }
+
         #result {
             position: sticky;
             top: 10px;
             border: 1px dotted #ddd;
-            height: 300px;
             margin: 0 0 0 10px;
         }
 
         thead th {
-           position: sticky;
+            position: sticky;
             top: 0;
             background: #ddd;
         }
 
         #tree td {
-            border-bottom: 1px dashed #ddd;
+            border-bottom: 1px dashed #eee;
+        }
+
+        td.r, #tree input {
+            text-align: right;
+        }
+
+        #tree input {
+            width: 80px;
+        }
+
+        th {
+            text-align: center;
+        }
+
+        #tree tr td, #tree thead th {
+            padding: 0px 5px;
+        }
+
+        #tree tr.fancytree-active {
+            background: #eee;
+        }
+
+        #budget tbody td, #budget th {
+            padding: 0px 5px;
+        }
+
+        .clone {
+            display: none;
+        }
+        #infData tr {
+            border-bottom: 1px solid #ccc;
+        }
+        #infData th{
+            text-align: left;
         }
     </style>
 </head>
@@ -68,37 +100,136 @@
     <div id="calc">
         <table id="tree">
             <thead>
-                <tr> <th> </th> <th>Név</th> <th>Infláció</th> <th style="text-align:center;">Súly</th>   </tr>
+                <tr>
+                    <th colspan="4">KSH</th>
+                    <th colspan="2">Saját</th>
+                </tr>
+                <tr>
+                    <th></th>
+                    <th>Név</th>
+                    <th>Infláció</th>
+                    <th>KSH Súly (%)</th>
+                    <th>Saját költés</th>
+                    <th>Saját súly</th>
+                </tr>
             </thead>
             <tbody>
-                <tr>
+                <tr class="row">
                     <td></td>
                     <td></td>
-                    <td><span></span></td>
-                    <td><input type="text" style="text-align:right;" /></td>
+                    <td class="r"><span></span></td>
+                    <td class="r"><span></span></td>
+                    <td><input type="text" class="osszeg" placeholder="Havi költés" /></td>
+                    <td class="r"><span class="ownWeight"></span></td>
                 </tr>
             </tbody>
         </table>
         <div>
-          <div id="result">
+            <div id="result">
 
-            <span>Kiválasztás</span><br />
-            <a href="#" id="btnMind">Mindegyik </a><br />
-            <a href="#" id="btnEgyiksem">Egyik sem</a>
-            <hr />
+                <span>Saját kassza</span><br />
+                <input type="text" id="havikeret" placeholder="Havi keret" />
+                <hr />
 
-            <span>Összecsukás / kibontás</span><br />
-            <a href="#" id="btnCollapse">Összecsukás </a><br />         
-            <a href="#" id="btnExpand">Kibontás</a><br />
-            <hr />
+                <span>Kiválasztás</span><br />
+                <a href="#" id="btnMind">Mindegyik </a><br />
+                <a href="#" id="btnEgyiksem">Egyik sem</a>
+                <hr />
 
-              <span>Infláció</span><br />
-              <span id="inflacio"></span>
+                <span>Összecsukás / kibontás</span><br />
+                <a href="#" id="btnCollapse">Összecsukás </a><br />
+                <a href="#" id="btnExpand">Kibontás</a><br />
+                <hr />
+
+                <span>Infláció</span><br />
+                <hr />
+                <table id="infData">
+                    <tr>
+                        <th>
+                            <span>Ksh teljes:</span>
+                        </th>
+                        <td>
+                            <span id="inflacio1"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <span>Ksh (kijelölt):</span>
+                        </th>
+                        <td>
+                            <span id="inflacio2"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            <span>Saját:</span>
+                        </th>
+                        <td>
+                            <span id="inflacio3"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>
+                            <span>Saját (kijelölt):</span>
+
+                        </th>
+                        <td>
+                            <span id="inflacio4"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>
+                            <span>Saját infláció forintban:</span>
+                        </th>
+                        <td>
+                            <span id="inflacio5"></span>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <th>
+                            <span>Saját infláció forintban (kijelölt):</span>   
+
+                        </th>
+                        <td>
+                            <span id="inflacio6"></span>
+                        </td>
+                    </tr>
+                </table>
 
 
 
-          </div>
-      </div>
+
+
+            </div>
+        </div>
+        <div>
+            <table id="budget">
+                <thead>
+                    <tr>
+                        <th colspan="4">
+                            Büdzsé
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>Tétel</th>
+                        <th>Kiadás</th>
+                        <th>Súly</th>
+                        <th>Infláció</th>
+                    </tr>
+                    <tr class="clone">
+                        <td></td>
+                        <td class="r"></td>
+                        <td class="r"></td>
+                        <td class="r"></td>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
     </div>
 </body>
 </html>
