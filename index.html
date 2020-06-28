@@ -93,6 +93,11 @@
         #infData th{
             text-align: left;
         }
+
+        #budget a{
+            text-decoration: underline;
+            cursor:pointer;
+        }
     </style>
 </head>
 <body>
@@ -109,8 +114,8 @@
                     <th>Név</th>
                     <th>Infláció</th>
                     <th>KSH Súly (%)</th>
-                    <th>Saját költés</th>
-                    <th>Saját súly</th>
+                    <th>Saját költés (Ft)</th>
+                    <th>Saját súly (%)</th>
                 </tr>
             </thead>
             <tbody>
@@ -127,7 +132,7 @@
         <div>
             <div id="result">
 
-                <span>Saját kassza</span><br />
+                <span>Saját kassza (Ft)</span><br />
                 <input type="text" id="havikeret" placeholder="Havi keret" />
                 <hr />
 
@@ -146,7 +151,7 @@
                 <table id="infData">
                     <tr>
                         <th>
-                            <span>Ksh teljes:</span>
+                            <span>Ksh teljes (%):</span>
                         </th>
                         <td>
                             <span id="inflacio1"></span>
@@ -154,7 +159,7 @@
                     </tr>
                     <tr>
                         <th>
-                            <span>Ksh (kijelölt):</span>
+                            <span>Ksh (kijelölt) (%):</span>
                         </th>
                         <td>
                             <span id="inflacio2"></span>
@@ -163,7 +168,7 @@
 
                     <tr>
                         <th>
-                            <span>Saját:</span>
+                            <span>Saját (%):</span>
                         </th>
                         <td>
                             <span id="inflacio3"></span>
@@ -172,7 +177,7 @@
 
                     <tr>
                         <th>
-                            <span>Saját (kijelölt):</span>
+                            <span>Saját (kijelölt) (%):</span>
 
                         </th>
                         <td>
@@ -216,9 +221,9 @@
                     </tr>
                     <tr>
                         <th>Tétel</th>
-                        <th>Kiadás</th>
-                        <th>Súly</th>
-                        <th>Infláció</th>
+                        <th>Kiadás (Ft)</th>
+                        <th>Súly (%)</th>
+                        <th>Infláció (%)</th>
                     </tr>
                     <tr class="clone">
                         <td></td>

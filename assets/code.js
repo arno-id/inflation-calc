@@ -1,11 +1,9 @@
 /* 
   Todo:
-      Change datasource rutime?
-      
-    
-      design 
-      ugropont    
-       
+      Change datasource rutime? 
+         
+        design  
+        alternating row/column 
        responsive
 */
 (function ($) {
@@ -23,17 +21,28 @@
         },
 
         this.kshRound = function (num, rounding) {
-            return Math.round(num * rounding) / rounding;
+            return (Math.round(num * 100000) / 100000).toFixed(rounding);
+        },
+
+        this.ScrollToNode = function (node) {
+
+            $("body,html").animate(
+                {
+                    scrollTop: $($.ui.fancytree
+                        .getTree($.Calculator.settings.tree)
+                        .getNodeByKey(node.toString()).tr).offset().top - $($.Calculator.settings.tree + ' thead').height()
+                },
+                800 //speed
+            );
         },
 
         this.FormatNumber = function ($elem, useHTML) {
-
             var selection = window.getSelection().toString();
             if (selection !== '') return;
             if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) return;
             var $this = $elem;
             var input = useHTML == 1 ? $this.html() : $this.val();
-            var input = input.replace(/[\D\s\._\-]+/g, "");
+            var input = input.replace(/[\D\s\._\-a-zA-Z]+/g, "");
             input = input ? parseInt(input, 10) : 0;
 
             if (useHTML == 1)
@@ -47,14 +56,12 @@
         },
         this.init = function () {
             $(function () {
-
                 $(document).on("keyup", ($.Calculator.settings.userBudget + ', ' + $.Calculator.settings.userSpendings), function (event) {
                     $.Calculator.FormatNumber($(this))
                 });
                 $.Calculator.loadData();
                 $($.Calculator.settings.userBudget).data('manuallyChanged', 0);
             })
-
 
             $(document).on("keyup", "" + $.Calculator.settings.userBudget, function () {
                 $($.Calculator.settings.userBudget).data('manuallyChanged', $($.Calculator.settings.userBudget).val() == "" ? 0 : 1);
@@ -175,9 +182,7 @@
 
         this.CalcBudget = function () {
             $($.Calculator.settings.budget + " tbody").html('')
-            //get  the fields with values
-            //calculate new weights
-            let budget = 0;
+            let budget = 0.0;
             let checkedBudget = 0;
             let tempData = new Array();
             $(this.settings.userSpendings).each(function (e, v) {
@@ -187,7 +192,7 @@
                     if ($.ui.fancytree
                         .getTree($.Calculator.settings.tree)
                         .getNodeByKey(nodeData.key).partsel)
-                            checkedBudget += val;
+                        checkedBudget += val;
                     budget += val;
                     tempData.push({
                         node: nodeData.key,
@@ -214,22 +219,22 @@
 
 
             tempData.forEach(x => {
-                x.weight = Math.round(10 * x.spending / budget) / 10;
+                x.weight = $.Calculator.kshRound(100 * x.spending / budget, 2);
                 let nodeEach = $.ui.fancytree
                     .getTree($.Calculator.settings.tree)
                     .getNodeByKey("" + x.node + "");
                 x.text = nodeEach.title;
                 x.checked = nodeEach.partsel ? 1 : 0;
-                
-                InflaHelper += x.weight * x.inf;
-                if (x.checked) { 
-                    checkedInflaHelper += (Math.round(10 * x.spending / checkedBudget) / 10) * x.inf; 
+
+                InflaHelper += x.weight / 100 * x.inf;
+                if (x.checked) {
+                    checkedInflaHelper += (Math.round(10 * x.spending / checkedBudget) / 10) * x.inf;
                 }
 
                 $(nodeEach
                     .tr)
                     .find($.Calculator.settings.userWeight)
-                    .text(x.weight * 100)
+                    .text(this.kshRound(x.weight, 2))
 
                 let newrow = $($.Calculator.settings.budget)
                     .find('.clone')
@@ -241,7 +246,7 @@
 
                 newrow.find('td')
                     .eq(0)
-                    .html(x.text);
+                    .html("<a onclick='$.Calculator.ScrollToNode(" + x.node + ")'>" + x.text + "</a>");
 
                 newrow.find('td')
                     .eq(1)
@@ -251,7 +256,7 @@
 
                 newrow.find('td')
                     .eq(2)
-                    .html(x.weight * 100);
+                    .html(this.kshRound(x.weight, 2));
 
                 newrow.find('td')
                     .eq(3)
@@ -262,16 +267,14 @@
 
             });
 
-            $('#inflacio3').html(this.kshRound(InflaHelper, 10))
-            $('#inflacio4').html(this.kshRound(checkedInflaHelper, 10))
+            $('#inflacio3').html(this.kshRound(InflaHelper, 1))
+            $('#inflacio4').html(this.kshRound(checkedInflaHelper, 1))
 
-            /* 
+            $('#inflacio5').html(this.kshRound(((InflaHelper / 100) - 1) * budget, 1))
+            $('#inflacio6').html(this.kshRound(((checkedInflaHelper / 100) - 1) * checkedBudget, 1))
 
-              <span>Saját infláció forintban:</span><br />
-              <span id="inflacio5"></span><br />
-
-              <span>Saját infláció forintban (kijelölt):</span>   <br />
-              <span id="inflacio6"></span><br />*/
+            $.Calculator.FormatNumber($('#inflacio5'), 0)
+            $.Calculator.FormatNumber($('#inflacio6'), 0)
         },
         this.CalcKshInflations = function () {
             let fullWeight = 0;
@@ -291,23 +294,11 @@
                 return node;
             });
 
-            $('#inflacio1').html(this.kshRound(fullInf / fullWeight, 10))
-            $('#inflacio2').html(this.kshRound(CheckedInf / CheckedWeight, 10))
+            let kshInflation = this.kshRound(fullInf / fullWeight, 1);
+            let kshCheckedInflation = this.kshRound(fullInf / fullWeight, 1);
+            $('#inflacio1').html(kshInflation);
+            $('#inflacio2').html(kshCheckedInflation);
 
-            /*
-                  sumweight = allNodes.reduce(function (sumweight, o) {
-                      return sumweight + (o.data.suly);
-                  }, 0)
-                  let finalInf = 0;
-                  if (selNodes.length > 0) {
-                      selNodes.forEach(x => {
-                          finalInf += kshRound(x.data.infla * x.data.suly, 10);
-                      });
-      
-                      finalInf /= kshRound(sumweight, 100);
-                  }
-                  (Math.round(finalInf * 10) / 10);
-                  */
         }
 
     this.init()
