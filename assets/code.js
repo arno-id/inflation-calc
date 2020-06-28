@@ -1,15 +1,8 @@
-/* 
-  Todo:
-      Change datasource rutime? 
-         
-        design  
-        alternating row/column 
-       responsive
-*/
 (function ($) {
     $.Calculator = this;
 
     this.InflationData = new Array(),
+        this.RawSource = "",
         this.settings = {
             url: "3_6_2h.csv",
             tree: "#tree",
@@ -17,6 +10,9 @@
             userSpendings: ".osszeg",
             userWeight: ".ownWeight",
             userBudget: "#havikeret",
+            modelTextarea: "#adatforras",
+            ModalSave: "#ModalSave",
+            ModalID: "#adatForrasModal",
             $tree: $(this.tree)
         },
 
@@ -25,7 +21,6 @@
         },
 
         this.ScrollToNode = function (node) {
-
             $("body,html").animate(
                 {
                     scrollTop: $($.ui.fancytree
@@ -71,6 +66,15 @@
             $(document).on("keyup", $.Calculator.settings.userSpendings, function (event) {
                 $.Calculator.CalcBudget();
             });
+
+            $(document).on("click", $.Calculator.settings.ModalSave, function (event) {
+                $.Calculator.InflationData = new Array();
+                $.Calculator.RawSource = $($.Calculator.settings.modelTextarea).val();
+                $.Calculator.ParseRawData();
+                $.ui.fancytree.getTree($.Calculator.settings.tree).reload($.Calculator.InflationData)
+                $('#adatForrasModal').modal('hide')
+            });
+
         },
         this.getSelectedNodes = function () {
             return $.map($.ui.fancytree.getTree($.Calculator.settings.tree).getSelectedNodes(), function (node) {
@@ -93,6 +97,7 @@
                 checkbox: true,
                 selectMode: 3,
                 minExpandLevel: 1,
+                keyboard: false,
                 source: ($.Calculator.InflationData),
                 table: {
                     nodeColumnIdx: 1
@@ -137,145 +142,155 @@
             $.ajax({
                 url: this.settings.url
             }).done(function (data) {
-                data.split("\n").forEach(el => {
-                    if (el.trim().length == 0) return;
+                $.Calculator.RawSource = data;
+                $($.Calculator.settings.modelTextarea).val(data);
+                $.Calculator.ParseRawData();
+            });
+        },
 
-                    let element = el.split(";");
-                    let id = element[0];
+        this.ParseRawData = function (needInit) {
+            this.RawSource.split("\n").forEach(el => {
+                if (el.trim().length == 0) return;
 
-                    if (id == "" || id == null || id.indexOf("–") > -1 || id.indexOf("-") > -1) { }
-                    else {
-                        let text = element[1].trim().replace("\"", "");
-                        let suly = parseFloat(element[2]);
-                        let infla = element[3].trim();
-                        let subID1 = id.substring(0, 1);
-                        let subID2 = id.substring(0, 2);
-                        let obj = {
-                            title: text,
-                            infla: infla,
-                            suly: suly,
-                            key: id
-                        }
+                let element = el.split(";");
+                let id = element[0];
 
-                        if ($.Calculator.InflationData.find(x => x.key == subID1) == null)
-                            $.Calculator.InflationData.push({ title: "", key: subID1, folder: true, children: [] });
-
-                        if (id.length == 1) {
-                            Object.assign($.Calculator.InflationData.find(x => x.key == subID1), obj);
-                            return;
-                        }
-
-                        if ($.Calculator.InflationData.find(x => x.key == subID1).children.find(x => x.key == subID2) == null)
-                            $.Calculator.InflationData.find(x => x.key == subID1).children.push({ title: "", folder: true, key: subID2, children: [] });
-
-                        if (id.length == 2) {
-                            Object.assign($.Calculator.InflationData.find(x => x.key == subID1).children.find(x => x.key == subID2), obj);
-                            return;
-                        }
-
-                        $.Calculator.InflationData.find(x => x.key == subID1).children.find(x => x.key == subID2).children.push({ title: text, key: id, infla: infla, suly: suly });
+                if (id == "" || id == null || id.indexOf("–") > -1 || id.indexOf("-") > -1) { }
+                else {
+                    let text = element[1].trim().replace("\"", "");
+                    let suly = parseFloat(element[2]);
+                    let infla = element[3].trim();
+                    let subID1 = id.substring(0, 1);
+                    let subID2 = id.substring(0, 2);
+                    let obj = {
+                        title: text,
+                        infla: infla,
+                        suly: suly,
+                        key: id
                     }
-                });
+
+                    if ($.Calculator.InflationData.find(x => x.key == subID1) == null)
+                        $.Calculator.InflationData.push({ title: "", key: subID1, folder: true, children: [] });
+
+                    if (id.length == 1) {
+                        Object.assign($.Calculator.InflationData.find(x => x.key == subID1), obj);
+                        return;
+                    }
+
+                    if ($.Calculator.InflationData.find(x => x.key == subID1).children.find(x => x.key == subID2) == null)
+                        $.Calculator.InflationData.find(x => x.key == subID1).children.push({ title: "", folder: true, key: subID2, children: [] });
+
+                    if (id.length == 2) {
+                        Object.assign($.Calculator.InflationData.find(x => x.key == subID1).children.find(x => x.key == subID2), obj);
+                        return;
+                    }
+
+                    $.Calculator.InflationData.find(x => x.key == subID1).children.find(x => x.key == subID2).children.push({ title: text, key: id, infla: infla, suly: suly });
+                }
+            });
+
+            if ($.ui.fancytree.getTree($.Calculator.settings.tree) == null)
                 $.Calculator.initTree();
-            });
-        },
+        }
 
-        this.CalcBudget = function () {
-            $($.Calculator.settings.budget + " tbody").html('')
-            let budget = 0.0;
-            let checkedBudget = 0;
-            let tempData = new Array();
-            $(this.settings.userSpendings).each(function (e, v) {
-                if ($(this).val() != "") {
-                    let nodeData = $.Calculator.GetInflactionValue($(this).data('node'));
-                    let val = parseFloat($(this).val().replace(/[\s\ ]+/g, ""));
-                    if ($.ui.fancytree
-                        .getTree($.Calculator.settings.tree)
-                        .getNodeByKey(nodeData.key).partsel)
-                        checkedBudget += val;
-                    budget += val;
-                    tempData.push({
-                        node: nodeData.key,
-                        inf: parseFloat(nodeData.infla),
-                        weight: 0,
-                        checked: 0,
-                        spending: val,
-                        text: ''
-                    });
-                }
-            });
-
-            let ubudget = $($.Calculator.settings.userBudget);
-            if (ubudget.data('manuallyChanged') == 0) {
-                ubudget.val(budget);
-                $.Calculator.FormatNumber(ubudget)
-            }
-            else {
-                budget = $($.Calculator.settings.userBudget).val();
-            }
-
-            let checkedInflaHelper = 0;
-            let InflaHelper = 0;
-
-
-            tempData.forEach(x => {
-                x.weight = $.Calculator.kshRound(100 * x.spending / budget, 2);
-                let nodeEach = $.ui.fancytree
+    this.CalcBudget = function () {
+        $($.Calculator.settings.budget + " tbody").html('')
+        let budget = 0.0;
+        let checkedBudget = 0;
+        let tempData = new Array();
+        $(this.settings.userSpendings).each(function (e, v) {
+            if ($(this).val() != "") {
+                let nodeData = $.Calculator.GetInflactionValue($(this).data('node'));
+                let val = parseFloat($(this).val().replace(/[\s\ ]+/g, ""));
+                if ($.ui.fancytree
                     .getTree($.Calculator.settings.tree)
-                    .getNodeByKey("" + x.node + "");
-                x.text = nodeEach.title;
-                x.checked = nodeEach.partsel ? 1 : 0;
+                    .getNodeByKey(nodeData.key).partsel)
+                    checkedBudget += val;
+                budget += val;
+                tempData.push({
+                    node: nodeData.key,
+                    inf: parseFloat(nodeData.infla),
+                    weight: 0,
+                    checked: 0,
+                    spending: val,
+                    text: ''
+                });
+            }
+        });
 
-                InflaHelper += x.weight / 100 * x.inf;
-                if (x.checked) {
-                    checkedInflaHelper += (Math.round(10 * x.spending / checkedBudget) / 10) * x.inf;
-                }
+        let untouchedBudget = budget;
+        let ubudget = $($.Calculator.settings.userBudget);
+        if (ubudget.data('manuallyChanged') == 0) {
+            ubudget.val(budget);
+            $.Calculator.FormatNumber(ubudget)
+        }
+        else {
+            budget = parseFloat($($.Calculator.settings.userBudget).val().replace(/[\s\ ]+/g, ""));
+        }
 
-                $(nodeEach
-                    .tr)
-                    .find($.Calculator.settings.userWeight)
-                    .text(this.kshRound(x.weight, 2))
+        let checkedInflaHelper = 0;
+        let InflaHelper = 0;
 
-                let newrow = $($.Calculator.settings.budget)
-                    .find('.clone')
-                    .clone();
 
-                newrow
-                    .removeClass('clone')
-                    .show();
+        tempData.forEach(x => {
+            x.weight = $.Calculator.kshRound(100 * x.spending / budget, 2);
+            let nodeEach = $.ui.fancytree
+                .getTree($.Calculator.settings.tree)
+                .getNodeByKey("" + x.node + "");
+            x.text = nodeEach.title;
+            x.checked = nodeEach.partsel ? 1 : 0;
 
-                newrow.find('td')
-                    .eq(0)
-                    .html("<a onclick='$.Calculator.ScrollToNode(" + x.node + ")'>" + x.text + "</a>");
+            InflaHelper += x.weight / 100 * x.inf;
+            if (x.checked) {
+                checkedInflaHelper += (Math.round(10 * x.spending / checkedBudget) / 10) * x.inf;
+            }
 
-                newrow.find('td')
-                    .eq(1)
-                    .html(x.spending);
+            $(nodeEach
+                .tr)
+                .find($.Calculator.settings.userWeight)
+                .text(this.kshRound(x.weight, 2))
 
-                $.Calculator.FormatNumber(newrow.find('td').eq(1), 1)
+            let newrow = $($.Calculator.settings.budget)
+                .find('.clone')
+                .clone();
 
-                newrow.find('td')
-                    .eq(2)
-                    .html(this.kshRound(x.weight, 2));
+            newrow
+                .removeClass('clone')
+                .show();
 
-                newrow.find('td')
-                    .eq(3)
-                    .html(x.inf);
+            newrow.find('td')
+                .eq(0)
+                .html("<a onclick='$.Calculator.ScrollToNode(" + x.node + ")'>" + x.text + "</a>");
 
-                $($.Calculator.settings.budget + " tbody")
-                    .append(newrow)
+            newrow.find('td')
+                .eq(1)
+                .html(x.spending);
 
-            });
+            $.Calculator.FormatNumber(newrow.find('td').eq(1), 1)
 
-            $('#inflacio3').html(this.kshRound(InflaHelper, 1))
-            $('#inflacio4').html(this.kshRound(checkedInflaHelper, 1))
+            newrow.find('td')
+                .eq(2)
+                .html(this.kshRound(x.weight, 2));
 
-            $('#inflacio5').html(this.kshRound(((InflaHelper / 100) - 1) * budget, 1))
-            $('#inflacio6').html(this.kshRound(((checkedInflaHelper / 100) - 1) * checkedBudget, 1))
+            newrow.find('td')
+                .eq(3)
+                .html(x.inf);
 
-            $.Calculator.FormatNumber($('#inflacio5'), 0)
-            $.Calculator.FormatNumber($('#inflacio6'), 0)
-        },
+            $($.Calculator.settings.budget + " tbody")
+                .append(newrow)
+
+        });
+
+
+        $('#inflacio3').html(this.kshRound(InflaHelper, 1))
+        $('#inflacio4').html(this.kshRound(checkedInflaHelper, 1))
+
+        $('#inflacio5').html(this.kshRound(((InflaHelper / 100) - 1) * untouchedBudget, 0))
+        $('#inflacio6').html(this.kshRound(((checkedInflaHelper / 100) - 1) * checkedBudget, 0))
+
+        $.Calculator.FormatNumber($('#inflacio5'), 1)
+        $.Calculator.FormatNumber($('#inflacio6'), 1)
+    },
         this.CalcKshInflations = function () {
             let fullWeight = 0;
             let fullInf = 0;

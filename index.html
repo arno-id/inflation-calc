@@ -8,6 +8,10 @@
 
     <link href="assets/skin-xp/ui.fancytree.min.css" rel="stylesheet">
     <link href="assets/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/bootstrap-grid.min.css" rel="stylesheet">
+    <link href="assets/bootstrap-reboot.min.css" rel="stylesheet">
+
+    <script src="assets/bootstrap.min.js"></script>
     <script src="assets/jquery.fancytree-all.min.js"></script>
     <script src="assets/jquery.fancytree.grid.js"></script>
     <script src="assets/code.js"></script>
@@ -39,21 +43,19 @@
             height: 100vh;
         }
 
-        #calc {
+        /* #calc {
             display: flex;
         }
-
+           */
         #result {
             position: sticky;
-            top: 10px;
-            border: 1px dotted #ddd;
-            margin: 0 0 0 10px;
+            top: 5px;
         }
 
-        thead th {
+        thead .stickyRow th {
             position: sticky;
             top: 0;
-            background: #ddd;
+            /* background: #ddd;*/
         }
 
         #tree td {
@@ -87,153 +89,194 @@
         .clone {
             display: none;
         }
+
         #infData tr {
             border-bottom: 1px solid #ccc;
         }
-        #infData th{
+
+        #infData th {
             text-align: left;
         }
 
-        #budget a{
+        #budget a {
             text-decoration: underline;
-            cursor:pointer;
+            cursor: pointer;
         }
     </style>
 </head>
-<body>
+<body class="bg-light">
 
-    <div id="calc">
-        <table id="tree">
-            <thead>
-                <tr>
-                    <th colspan="4">KSH</th>
-                    <th colspan="2">Saját</th>
-                </tr>
-                <tr>
-                    <th></th>
-                    <th>Név</th>
-                    <th>Infláció</th>
-                    <th>KSH Súly (%)</th>
-                    <th>Saját költés (Ft)</th>
-                    <th>Saját súly (%)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="row">
-                    <td></td>
-                    <td></td>
-                    <td class="r"><span></span></td>
-                    <td class="r"><span></span></td>
-                    <td><input type="text" class="osszeg" placeholder="Havi költés" /></td>
-                    <td class="r"><span class="ownWeight"></span></td>
-                </tr>
-            </tbody>
-        </table>
-        <div>
-            <div id="result">
-
-                <span>Saját kassza (Ft)</span><br />
-                <input type="text" id="havikeret" placeholder="Havi keret" />
-                <hr />
-
-                <span>Kiválasztás</span><br />
-                <a href="#" id="btnMind">Mindegyik </a><br />
-                <a href="#" id="btnEgyiksem">Egyik sem</a>
-                <hr />
-
-                <span>Összecsukás / kibontás</span><br />
-                <a href="#" id="btnCollapse">Összecsukás </a><br />
-                <a href="#" id="btnExpand">Kibontás</a><br />
-                <hr />
-
-                <span>Infláció</span><br />
-                <hr />
-                <table id="infData">
+    <div id="calc" class="container-fluid">
+        <div class="row">
+            <table id="tree" class="table table-striped col-xl-6">
+                <thead class="thead-dark">
                     <tr>
-                        <th>
-                            <span>Ksh teljes (%):</span>
-                        </th>
-                        <td>
-                            <span id="inflacio1"></span>
-                        </td>
+                        <th colspan="4">KSH</th>
+                        <th colspan="2">Saját</th>
                     </tr>
-                    <tr>
-                        <th>
-                            <span>Ksh (kijelölt) (%):</span>
-                        </th>
-                        <td>
-                            <span id="inflacio2"></span>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <th>
-                            <span>Saját (%):</span>
-                        </th>
-                        <td>
-                            <span id="inflacio3"></span>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <th>
-                            <span>Saját (kijelölt) (%):</span>
-
-                        </th>
-                        <td>
-                            <span id="inflacio4"></span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>
-                            <span>Saját infláció forintban:</span>
-                        </th>
-                        <td>
-                            <span id="inflacio5"></span>
-                        </td>
-                    </tr>
-
-
-                    <tr>
-                        <th>
-                            <span>Saját infláció forintban (kijelölt):</span>   
-
-                        </th>
-                        <td>
-                            <span id="inflacio6"></span>
-                        </td>
-                    </tr>
-                </table>
-
-
-
-
-
-            </div>
-        </div>
-        <div>
-            <table id="budget">
-                <thead>
-                    <tr>
-                        <th colspan="4">
-                            Büdzsé
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>Tétel</th>
-                        <th>Kiadás (Ft)</th>
-                        <th>Súly (%)</th>
-                        <th>Infláció (%)</th>
-                    </tr>
-                    <tr class="clone">
-                        <td></td>
-                        <td class="r"></td>
-                        <td class="r"></td>
-                        <td class="r"></td>
+                    <tr class="stickyRow">
+                        <th></th>
+                        <th>Név</th>
+                        <th>Infláció</th>
+                        <th>KSH Súly (%)</th>
+                        <th>Saját költés (Ft)</th>
+                        <th>Saját súly (%)</th>
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                    <tr class="row">
+                        <td></td>
+                        <td></td>
+                        <td class="r"><span></span></td>
+                        <td class="r"><span></span></td>
+                        <td><input type="text" class="osszeg form-control form-control-sm" placeholder="Költés" /></td>
+                        <td class="r"><span class="ownWeight"></span></td>
+                    </tr>
+                </tbody>
             </table>
+            <div class="col-xl-2 ">
+                <div id="result" class="   ">
+
+                    <div class="card rounded shadow-sm mb-4">
+                        <h6 class="card-header text-center">Saját kassza (Ft)</h6><br />
+                        <input type="text" id="havikeret" class="text-center" readonly="readonly" placeholder="Havi keret" />
+                    </div>
+
+                    <div class="card rounded shadow-sm mb-4">
+                        <h6 class="card-header text-center">Kiválasztás</h6>
+                        <div class="flex-row">
+                            <a href="#" class="float-left pl-2" id="btnMind">Mindegyik </a>
+                            <a href="#" class="float-right pr-2" id="btnEgyiksem">Egyik sem</a>
+                        </div>
+                    </div>
+
+                    <div class="card rounded shadow-sm mb-4">
+                        <h6 class="card-header text-center">Összecsukás / kibontás</h6>
+                        <div class="flex-row">
+                            <a href="#" class="float-left pl-2" id="btnCollapse">Összecsukás </a>
+                            <a href="#" class="float-right pr-2" id="btnExpand">Kibontás</a>
+                        </div>
+                    </div>
+
+                    <div class="card rounded shadow-sm">
+                        <h6 class="card-header text-center">Infláció</h6>
+
+                        <table id="infData" class="table table-striped mb-0">
+                            <tr>
+                                <th>
+                                    <span>Ksh teljes (%):</span>
+                                </th>
+                                <td>
+                                    <span id="inflacio1"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <span>Ksh (kijelölt) (%):</span>
+                                </th>
+                                <td>
+                                    <span id="inflacio2"></span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>
+                                    <span>Saját (%):</span>
+                                </th>
+                                <td>
+                                    <span id="inflacio3"></span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <th>
+                                    <span>Saját (kijelölt) (%):</span>
+
+                                </th>
+                                <td>
+                                    <span id="inflacio4"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <span>Saját infláció forintban:</span>
+                                </th>
+                                <td>
+                                    <span id="inflacio5"></span>
+                                </td>
+                            </tr>
+
+
+                            <tr>
+                                <th>
+                                    <span>Saját infláció forintban (kijelölt):</span>
+
+                                </th>
+                                <td>
+                                    <span id="inflacio6"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <button type="button" class="btn btn-secondary w-100 mt-2 " data-toggle="modal" data-target="#adatForrasModal">
+                        Inflációs adatok
+                    </button>
+
+
+
+                </div>
+            </div>
+            <div class="col-xl-4">
+                <table id="budget" class="table table-striped">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th colspan="4">
+                                Büdzsé
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Tétel</th>
+                            <th>Kiadás (Ft)</th>
+                            <th>Súly (%)</th>
+                            <th>Infláció (%)</th>
+                        </tr>
+                        <tr class="clone">
+                            <td></td>
+                            <td class="r"></td>
+                            <td class="r"></td>
+                            <td class="r"></td>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="adatForrasModal" tabindex="-1"  role="dialog" aria-labelledby="adatForrasModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adatForrasModalLabel">Adatforrás</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger" role="alert">
+                        Fontos, hogy 4 oszlop legyen!<br />
+                        Továbbá 3 szint a szülő gyermek elemeknél (pl 1:"Étel" 10;"Hús, hal", 101:"Baromfi") <br />
+                        Pontosvesszővel tagolt CSV!<br />
+                        Oszlopok: Kód, Név, Súly, Infláció
+                    </div>
+                    <textarea id="adatforras" class="form-control"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+                    <button type="button" id="ModalSave" class="btn btn-primary">Mentés</button>
+                </div>
+            </div>
         </div>
     </div>
 </body>
