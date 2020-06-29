@@ -36,6 +36,13 @@
                 $.ui.fancytree.getTree("#tree").expandAll();
             });
 
+            $("#btnExpandMiddle").click(function () {
+                $.ui.fancytree.getTree("#tree").visit(function (node) {                    
+                    node.setExpanded(node.getLevel() < 2);
+                });
+            });
+           
+
         });
     </script>
     <style type="text/css">
@@ -152,9 +159,10 @@
 
                     <div class="card rounded shadow-sm mb-4">
                         <h6 class="card-header text-center">Összecsukás / kibontás</h6>
-                        <div class="flex-row">
-                            <a href="#" class="float-left pl-2" id="btnCollapse">Összecsukás </a>
-                            <a href="#" class="float-right pr-2" id="btnExpand">Kibontás</a>
+                        <div class="">
+                            <a href="#" class="pl-2" id="btnCollapse">Összecsukás </a><br />
+                            <a href="#" class="pl-2" id="btnExpandMiddle">Félig kibontás</a><br />
+                            <a href="#" class="pl-2" id="btnExpand">Kibontás</a>
                         </div>
                     </div>
 

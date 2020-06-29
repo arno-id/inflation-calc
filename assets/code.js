@@ -36,10 +36,13 @@
             if (selection !== '') return;
             if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) return;
             var $this = $elem;
-            var input = useHTML == 1 ? $this.html() : $this.val();
-            var input = input.replace(/[\D\s\._\-a-zA-Z]+/g, "");
+            var input = useHTML == 1 ? $this.html() : $this.val();            
+            let negative = false;
+            if (input.substring(0, 1) == "-") negative = true;
+            var input = input.replace(/[\D\s\._]+/g, "");
+            if (negative) input = "-" + input;
             input = input ? parseInt(input, 10) : 0;
-
+         
             if (useHTML == 1)
                 $this.html(function () {
                     return (input === 0) ? "" : input.toLocaleString("hu-HU");
@@ -124,16 +127,12 @@
                         .find("span")
                         .text(node.data.suly);
 
-                    if (node.key.length > 2)
-                        $tdList
-                            .eq(4)
-                            .find("input")
-                            .data('node', node.key);
-                    else
-                        $tdList
-                            .eq(4)
-                            .find("input")
-                            .hide();
+
+                    $tdList
+                        .eq(4)
+                        .find("input")
+                        .data('node', node.key);
+
                 }
             });
         },
@@ -287,8 +286,8 @@
 
         $('#inflacio5').html(this.kshRound(((InflaHelper / 100) - 1) * untouchedBudget, 0))
         $('#inflacio6').html(this.kshRound(((checkedInflaHelper / 100) - 1) * checkedBudget, 0))
-
-        $.Calculator.FormatNumber($('#inflacio5'), 1)
+        
+        $.Calculator.FormatNumber($('#inflacio5'), 1)        
         $.Calculator.FormatNumber($('#inflacio6'), 1)
     },
         this.CalcKshInflations = function () {
