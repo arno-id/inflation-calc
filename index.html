@@ -136,8 +136,8 @@
                         <td></td>
                         <td class="r"><span></span></td>
                         <td class="r"><span></span></td>
-                        <td><input type="text" class="osszeg form-control form-control-sm" placeholder="Költés" /></td>
-                        <td class="r"><span class="ownWeight"></span></td>
+                        <td><input type="text" data-manuallyChanged="0" class="osszeg form-control form-control-sm" placeholder="Költés" /></td>
+                        <td class="r"><span class="ownWeight" ></span></td>
                     </tr>
                 </tbody>
             </table>
@@ -146,7 +146,7 @@
 
                     <div class="card rounded shadow-sm mb-4">
                         <h6 class="card-header text-center">Saját kassza (Ft)</h6><br />
-                        <input type="text" id="havikeret" class="text-center" readonly="readonly" placeholder="Havi keret" />
+                        <input type="text" id="havikeret" class="text-center" value="" readonly="readonly" placeholder="Havi keret" />
                     </div>
 
                     <div class="card rounded shadow-sm mb-4">
@@ -231,6 +231,9 @@
                         Inflációs adatok
                     </button>
 
+                    <button type="button" class="btn btn-secondary w-100 mt-2 " data-toggle="modal" data-target="#adatMentes">
+                        Büdzsé mentés / betöltés
+                    </button>
 
 
                 </div>
@@ -287,5 +290,32 @@
             </div>
         </div>
     </div>
+
+    
+    <div class="modal fade" id="adatMentes" tabindex="-1"  role="dialog" aria-labelledby="adatMentesLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="adatMentesLabel">Büdzsé mentés betöltés</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-primary" role="alert">
+                        Másold ki és mentsd el a szöveget.<br/>
+                        Később ugyanide másold vissza a visszatöltéshez.
+                    </div>
+                    <textarea id="budgetforras" class="form-control"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Mégsem</button>
+                    <button type="button" id="BudgetModalSave" class="btn btn-primary">Kész</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
 </body>
 </html>
