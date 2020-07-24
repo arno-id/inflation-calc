@@ -1,3 +1,8 @@
+/*
+    save icon
+    clipboard
+    
+*/
 (function ($) {
     $.Calculator = this;
 
@@ -262,6 +267,10 @@
                 if ($(this).data('node') == node) {
                     $(this).val(spending);
                     $.Calculator.FormatNumber($(this))
+                    $(this).effect( "bounce", {
+                            distance: 2,
+                            times: 1
+                    }, 100 );
                 } 
             });
         },
