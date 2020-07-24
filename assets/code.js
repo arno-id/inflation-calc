@@ -1,8 +1,3 @@
-/*
-    save icon
-    clipboard
-    
-*/
 (function ($) {
     $.Calculator = this;
 
