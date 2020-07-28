@@ -309,7 +309,9 @@
                 if ($.ui.fancytree
                     .getTree($.Calculator.settings.tree)
                     .getNodeByKey(nodeData.key).partsel)
-                    checkedBudget += val;
+                    {                         
+                        checkedBudget += val;
+                    }
                 budget += val;
                 tempData.push({
                     node: nodeData.key,
@@ -386,7 +388,8 @@
 
             InflaHelper += x.weight / 100 * x.inf;
             if (x.checked) {
-                checkedInflaHelper += (Math.round(10 * x.spending / checkedBudget) / 10) * x.inf;
+                let tempval =  (Math.round(1000 * x.spending / checkedBudget) / 1000) * x.inf;
+                checkedInflaHelper += tempval;                
             }
 
             $(nodeEach
