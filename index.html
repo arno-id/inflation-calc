@@ -10,125 +10,29 @@
     <link href="assets/bootstrap.min.css" rel="stylesheet">
     <link href="assets/bootstrap-grid.min.css" rel="stylesheet">
     <link href="assets/bootstrap-reboot.min.css" rel="stylesheet">
+    <link href="assets/style.css" rel="stylesheet">
 
     <script src="assets/bootstrap.min.js"></script>
     <script src="assets/jquery.fancytree-all.min.js"></script>
     <script src="assets/jquery.fancytree.grid.js"></script>
     <script src="assets/code.js"></script>
-    <!-- Initialize the tree when page is loaded -->
-    <script type="text/javascript">
-        $(function () {  // on page load
-            // Create the tree inside the <div id="tree"> element.
 
-            $("#btnMind").click(function () {
-                $.ui.fancytree.getTree("#tree").selectAll();
-            });
-
-            $("#btnEgyiksem").click(function () {
-                $.ui.fancytree.getTree("#tree").selectAll(false);
-            });
-
-            $("#btnCollapse").click(function () {
-                $.ui.fancytree.getTree("#tree").expandAll(false);
-            });
-
-            $("#btnExpand").click(function () {
-                $.ui.fancytree.getTree("#tree").expandAll();
-            });
-
-            $("#btnExpandMiddle").click(function () {
-                $.ui.fancytree.getTree("#tree").visit(function (node) {                    
-                    node.setExpanded(node.getLevel() < 2);
-                });
-            });
-           
-
-        });
-    </script>
-    <style type="text/css">
-        body {
-            height: 100vh;
-        }
-
-        /* #calc {
-            display: flex;
-        }
-           */
-        #result {
-            position: sticky;
-            top: 5px;
-        }
-
-        thead .stickyRow th {
-            position: sticky;
-            top: 0;
-            /* background: #ddd;*/
-        }
-
-        #tree td {
-            border-bottom: 1px dashed #eee;
-        }
-
-        td.r, #tree input {
-            text-align: right;
-        }
-
-        td{
-            position:relative;
-        }
-
-        #tree input {
-            width: 80px;
-        }
-
-        th {
-            text-align: center;
-        }
-
-        #tree tr td, #tree thead th {
-            padding: 0px 5px;
-        }
-
-        #tree tr.fancytree-active {
-            background: #eee;
-        }
-
-        #budget tbody td, #budget th {
-            padding: 0px 5px;
-        }
-
-        .clone {
-            display: none;
-        }
-
-        #infData tr {
-            border-bottom: 1px solid #ccc;
-        }
-
-        #infData th {
-            text-align: left;
-        }
-
-        #budget a {
-            text-decoration: underline;
-            cursor: pointer;
-        }
-    </style>
 </head>
 <body class="bg-light">
 
     <div id="calc" class="container-fluid">
         <div class="row">
-            <table id="tree" class="table table-striped col-xl-6">
+            <table id="tree" class="table table-striped col-xl-6 align-middle">
                 <thead class="thead-dark">
                     <tr>
-                        <th colspan="4">KSH</th>
+                        <th colspan="5">KSH</th>
                         <th colspan="2">Saját</th>
                     </tr>
                     <tr class="stickyRow">
                         <th></th>
                         <th>Név</th>
-                        <th>Infláció</th>
+                        <th>KSH Infláció</th>
+                        <th>Saját inflációs érték</th>
                         <th>KSH Súly (%)</th>
                         <th>Saját költés (Ft)</th>
                         <th>Saját súly (%)</th>
@@ -139,9 +43,10 @@
                         <td></td>
                         <td></td>
                         <td class="r"><span></span></td>
+                        <td class="text-center"><input type="number" min="0" max="10000" step="0.1" class="owninflaval form-control form-control-sm" placeholder="Saját infl." /></td>
                         <td class="r"><span></span></td>
                         <td><input type="text" data-manuallyChanged="0" class="osszeg form-control form-control-sm" placeholder="Költés" /></td>
-                        <td class="r"><span class="ownWeight" ></span></td>
+                        <td class="r"><span class="ownWeight"></span></td>
                     </tr>
                 </tbody>
             </table>
@@ -269,7 +174,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="adatForrasModal" tabindex="-1"  role="dialog" aria-labelledby="adatForrasModalLabel" aria-hidden="true">
+    <div class="modal fade" id="adatForrasModal" tabindex="-1" role="dialog" aria-labelledby="adatForrasModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -295,8 +200,8 @@
         </div>
     </div>
 
-    
-    <div class="modal fade" id="adatMentes" tabindex="-1"  role="dialog" aria-labelledby="adatMentesLabel" aria-hidden="true">
+
+    <div class="modal fade" id="adatMentes" tabindex="-1" role="dialog" aria-labelledby="adatMentesLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -307,7 +212,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-primary" role="alert">
-                        Másold ki és mentsd el a szöveget.<br/>
+                        Másold ki és mentsd el a szöveget.<br />
                         Később ugyanide másold vissza a visszatöltéshez.
                     </div>
                     <textarea id="budgetforras" class="form-control"></textarea>
@@ -320,6 +225,32 @@
         </div>
     </div>
 
-    
+    <script type="text/javascript">
+        $(function () {  // on page load
+            // Create the tree inside the <div id="tree"> element.
+
+            $("#btnMind").click(function () {
+                $.ui.fancytree.getTree("#tree").selectAll();
+            });
+
+            $("#btnEgyiksem").click(function () {
+                $.ui.fancytree.getTree("#tree").selectAll(false);
+            });
+
+            $("#btnCollapse").click(function () {
+                $.ui.fancytree.getTree("#tree").expandAll(false);
+            });
+
+            $("#btnExpand").click(function () {
+                $.ui.fancytree.getTree("#tree").expandAll();
+            });
+
+            $("#btnExpandMiddle").click(function () {
+                $.ui.fancytree.getTree("#tree").visit(function (node) {
+                    node.setExpanded(node.getLevel() < 2);
+                });
+            });
+        });
+    </script>
 </body>
 </html>

@@ -1,0 +1,72 @@
+body {
+    height: 100vh;
+}
+
+/* #calc {
+            display: flex;
+        }
+           */
+#result {
+    position: sticky;
+    top: 5px;
+}
+
+thead .stickyRow th {
+    position: sticky;
+    top: 0;
+    /* background: #ddd;*/
+}
+
+#tree td {
+    border-bottom: 1px dashed #eee;
+}
+
+td.r, #tree input {
+    text-align: right;
+}
+
+td {
+    position: relative; 
+}
+
+#tree input {
+    width: 80px;
+}
+
+th {
+    text-align: center;
+}
+
+#tree tr td, #tree thead th {
+    padding: 0px 5px;
+    vertical-align: middle; 
+}
+
+#tree tr.fancytree-active {
+    background: #eee;
+}
+
+#budget tbody td, #budget th {
+    padding: 0px 5px;
+}
+
+.clone {
+    display: none;
+}
+
+#infData tr {
+    border-bottom: 1px solid #ccc;
+}
+
+#infData th {
+    text-align: left;
+}
+
+#budget a {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.owninflaval{
+    display:inline;
+}

@@ -8,6 +8,7 @@
             tree: "#tree",
             budget: "#budget",
             userSpendings: ".osszeg",
+            userInfla: ".owninflaval",
             userWeight: ".ownWeight",
             userBudget: "#havikeret",
             modalTextarea: "#adatforras",
@@ -20,7 +21,9 @@
         },
 
         this.kshRound = function (num, rounding) {
-            return (Math.round(num * 100000) / 100000).toFixed(rounding);
+            let x = (Math.round(num * 100000) / 100000).toFixed(rounding);
+            if (isNaN(x)) x = "";
+            return x;
         },
 
         this.ScrollToNode = function (node) {
@@ -34,18 +37,30 @@
             );
         },
 
+        this.LimitDecimal = function (elem, e) {
+            if (
+                ($.inArray(e.keyCode, [37, 38, 39, 40, 46, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 8, 13, 190, 189]) == -1) // digits, digits in num pad, 'back', 'enter', '.', '-'
+                || (e.keyCode == 190 && $(e.target).val().indexOf(".") != -1) // not allow double dot '.'
+                || (e.keyCode == 190 && $(e.target).val().length == 0) // not allow dot '.' at the begining
+            ) {
+                return false;
+            }
+            return true;
+        },
+
         this.FormatNumber = function ($elem, useHTML) {
             var selection = window.getSelection().toString();
             if (selection !== '') return;
             if ($.inArray(event.keyCode, [38, 40, 37, 39]) !== -1) return;
             var $this = $elem;
-            var input = useHTML == 1 ? $this.html() : $this.val();            
+            var input = useHTML == 1 ? $this.html() : $this.val();
             let negative = false;
             if (input.substring(0, 1) == "-") negative = true;
             var input = input.replace(/[\D\s\._]+/g, "");
             if (negative) input = "-" + input;
             input = input ? parseInt(input, 10) : 0;
-         
+            if (isNaN(input)) input = "";
+
             if (useHTML == 1)
                 $this.html(function () {
                     return (input === 0) ? "" : input.toLocaleString("hu-HU");
@@ -60,10 +75,26 @@
                 $(document).on("keyup", ($.Calculator.settings.userBudget + ', ' + $.Calculator.settings.userSpendings), function (event) {
                     $.Calculator.FormatNumber($(this))
                 });
-                $.Calculator.loadData();
-                $($.Calculator.settings.userBudget).data('manuallyChanged', 0); 
 
-                $($.Calculator.settings.budgetModalID).on('shown.bs.modal', function () {                 
+                $(document).on("keydown", ($.Calculator.settings.userInfla), function (e) {
+                    let x = $.Calculator.LimitDecimal($(this), e)
+                    if (!x) return x;
+                });
+
+                $(document).on("keyup", ($.Calculator.settings.userInfla), function (e) {
+                    $.Calculator.SetItemOwnInfla($(this).data('node'), $(this).val())
+                    $.Calculator.CalcBudget();
+                });
+
+                $(document).on("input", ($.Calculator.settings.userInfla), function (e) {                
+                    $.Calculator.SetItemOwnInfla($(this).data('node'), $(this).val())
+                    $.Calculator.CalcBudget();
+                });
+
+                $.Calculator.loadData();
+                $($.Calculator.settings.userBudget).data('manuallyChanged', 0);
+
+                $($.Calculator.settings.budgetModalID).on('shown.bs.modal', function () {
                     $.Calculator.LoadDataToSave();
                 });
             })
@@ -76,11 +107,11 @@
             $(document).on("keyup", $.Calculator.settings.userSpendings, function (event) {
                 $.Calculator.CalcBudget();
             });
- 
+
             $(document).on("click", $.Calculator.settings.budgetModalSave, function (event) {
-                $.Calculator.RestoreSavedData();           
+                $.Calculator.RestoreSavedData();
             });
-            
+
 
             $(document).on("click", $.Calculator.settings.ModalSave, function (event) {
                 $.Calculator.InflationData = new Array();
@@ -96,35 +127,34 @@
                 if (node.key.length == 3) return node;
             });
         },
-        this.LoadDataToSave = function(){
-            let SaveData = [];          
+        this.LoadDataToSave = function () {
+            let SaveData = [];
             $($.Calculator.settings.userSpendings).each(function (e, v) {
-                if($(this).val() != "")
-                {
-                    let curNodeKey = $(this).data('node'); 
+                if ($(this).val() != "") {
+                    let curNodeKey = $(this).data('node');
                     let curspending = $.Calculator.GetPlainNuber($(this).val());
-                    SaveData.push(curNodeKey+";"+curspending);
+                    SaveData.push(curNodeKey + ";" + curspending);
                 }
-            }); 
+            });
             $($.Calculator.settings.budgetModalTextarea).val(SaveData.join('\n'));
         },
-        this.ClearSpendings = function(){
+        this.ClearSpendings = function () {
             $($.Calculator.settings.userSpendings).each(function (e, v) {
                 $(this).val('')
             });
         },
-        this.RestoreSavedData = function(){
+        this.RestoreSavedData = function () {
             let data = $($.Calculator.settings.budgetModalTextarea).val().trim().split('\n');
             $.Calculator.ClearSpendings();
             data.forEach(x => {
                 let row = x.trim().split(';');
-                if(row.length == 2){
+                if (row.length == 2) {
                     $.Calculator.SetNodeSpending(row[0], row[1]);
-                }  
+                }
             });
             $.Calculator.CalcBudget();
             $($.Calculator.settings.budgetModalID).modal('hide')
-        },     
+        },
         this.GetInflactionValue = function (key) {
             let item = $.Calculator.InflationData.find(x => x.key == key.substring(0, 1));
             if (key.length == 1) return item;
@@ -162,13 +192,20 @@
                         .find("span")
                         .text(node.data.infla);
 
+
                     $tdList
                         .eq(3)
+                        .find("input")
+                        .val(node.data.infla)
+                        .data('node', node.key);
+
+                    $tdList
+                        .eq(4)
                         .find("span")
                         .text(node.data.suly);
 
                     $tdList
-                        .eq(4)
+                        .eq(5)
                         .find("input")
                         .data('node', node.key);
                 }
@@ -202,6 +239,7 @@
                     let obj = {
                         title: text,
                         infla: infla,
+                        kshinfla: infla,
                         suly: suly,
                         key: id
                     }
@@ -222,222 +260,229 @@
                         return;
                     }
 
-                    $.Calculator.InflationData.find(x => x.key == subID1).children.find(x => x.key == subID2).children.push({ title: text, key: id, infla: infla, suly: suly });
+                    $.Calculator.InflationData.find(x => x.key == subID1).children.find(x => x.key == subID2).children.push({ title: text, key: id, kshinfla: infla, infla: infla, suly: suly });
                 }
             });
 
             if ($.ui.fancytree.getTree($.Calculator.settings.tree) == null)
                 $.Calculator.initTree();
         }
-        this.GetPlainNuber = function(v){
-            let x = parseFloat(v.replace(/[\s\ ]+/g, ""));
-            return isNaN(x) ? 0 : x;
-        }
-    
-        this.GetChildSpending = function (node){
-            let childSpending = 0; 
-            $(this.settings.userSpendings).each(function (e, v) {
-                let curNodeKey = $(this).data('node'); 
-                if( curNodeKey.substring(0, node.length) == node &&  node != curNodeKey){
-                    if($(this).val()!= ""){                     
-                        let curspending = $.Calculator.GetPlainNuber($(this).val());
-                        switch(curNodeKey.length ){                
-                            case 2:
-                                let subChildSpending = $.Calculator.GetChildSpending(curNodeKey);                              
-                                if($(this).val()!= "" &&  curspending != subChildSpending)
-                                    childSpending += curspending  - subChildSpending
+    this.GetPlainNuber = function (v) {
+        let x = parseFloat(v.replace(/[\s\ ]+/g, ""));
+        return isNaN(x) ? 0 : x;
+    }
+
+    this.GetChildSpending = function (node) {
+        let childSpending = 0;
+        $(this.settings.userSpendings).each(function (e, v) {
+            let curNodeKey = $(this).data('node');
+            if (curNodeKey.substring(0, node.length) == node && node != curNodeKey) {
+                if ($(this).val() != "") {
+                    let curspending = $.Calculator.GetPlainNuber($(this).val());
+                    switch (curNodeKey.length) {
+                        case 2:
+                            let subChildSpending = $.Calculator.GetChildSpending(curNodeKey);
+                            if ($(this).val() != "" && curspending != subChildSpending)
+                                childSpending += curspending - subChildSpending
                             break;
-                            case 3:
-                                if ($(this).val() != "" &&  curNodeKey.length > node.length) 
-                                    childSpending +=  curspending;
+                        case 3:
+                            if ($(this).val() != "" && curNodeKey.length > node.length)
+                                childSpending += curspending;
                             break;
-                        }
                     }
                 }
-            });
-            return childSpending;
+            }
+        });
+        return childSpending;
+    },
+        this.SetItemOwnInfla = function (node, infla) {
+            let item = $.Calculator.InflationData.find(x => x.key == node.substring(0, 1));
+            if (node.length == 1) item.infla = infla;
+            item = item.children.find(x => x.key == node.substring(0, 2));
+            if (node.length == 2) item.infla = infla;
+            item = item.children.find(x => x.key == node);
+            item.infla = infla;
         },
-        this.SetNodeSpending = function(node, spending){
+        this.SetNodeSpending = function (node, spending) {
             $(this.settings.userSpendings).each(function (e, v) {
                 if ($(this).data('node') == node) {
                     $(this).val(spending);
                     $.Calculator.FormatNumber($(this))
-                    $(this).effect( "bounce", {
-                            distance: 2,
-                            times: 1
-                    }, 100 );
-                } 
+                    $(this).effect("bounce", {
+                        distance: 2,
+                        times: 1
+                    }, 100);
+                }
             });
         },
-        this.GetNodeSpending = function(node){
+        this.GetNodeSpending = function (node) {
             let retSpending = 0;
-            $(this.settings.userSpendings).each(function (e, v) { 
-                if ($(this).data('node') == node && $(this).val() != "") 
-                    retSpending = $.Calculator.GetPlainNuber($(this).val());              
+            $(this.settings.userSpendings).each(function (e, v) {
+                if ($(this).data('node') == node && $(this).val() != "")
+                    retSpending = $.Calculator.GetPlainNuber($(this).val());
             });
             return retSpending;
-        }, 
-    this.CalcBudget = function () {        
-        $($.Calculator.settings.userWeight).each(function(){$(this).text('')});
-        $($.Calculator.settings.budget + " tbody").html('')
-        let budget = 0.0;
-        let checkedBudget = 0;
-        let tempData = new Array();
- 
-        $($(this.settings.userSpendings).get().reverse()).each(function (e, v) {                   
-            if($(this).data('node').length < 3){             
-                let childSpending =  $.Calculator.GetChildSpending($(this).data('node'));
-                let ownSpending = $.Calculator.GetNodeSpending($(this).data('node'));
-                if(isNaN(ownSpending)) ownSpending = 0;
-                if(ownSpending < childSpending){
-                    $.Calculator.SetNodeSpending($(this).data('node'), childSpending)
-                }  
-            }         
-        });
- 
-        $(this.settings.userSpendings).each(function (e, v) {
-            if ($(this).val() != "") {
-                let nodeData = $.Calculator.GetInflactionValue($(this).data('node'));
-                let val = $.Calculator.GetPlainNuber($(this).val());
+        },
+        this.CalcBudget = function () {
+            $($.Calculator.settings.userWeight).each(function () { $(this).text('') });
+            $($.Calculator.settings.budget + " tbody").html('')
+            let budget = 0.0;
+            let checkedBudget = 0;
+            let tempData = new Array();
 
-                if(nodeData.key.length < 3)
-                {
-                    let sp = $.Calculator.GetChildSpending(nodeData.key);                    
-                    val = Math.max(0, val - sp);
+            $($(this.settings.userSpendings).get().reverse()).each(function (e, v) {
+                if ($(this).data('node').length < 3) {
+                    let childSpending = $.Calculator.GetChildSpending($(this).data('node'));
+                    let ownSpending = $.Calculator.GetNodeSpending($(this).data('node'));
+                    if (isNaN(ownSpending)) ownSpending = 0;
+                    if (ownSpending < childSpending) {
+                        $.Calculator.SetNodeSpending($(this).data('node'), childSpending)
+                    }
                 }
+            });
 
-                if ($.ui.fancytree
-                    .getTree($.Calculator.settings.tree)
-                    .getNodeByKey(nodeData.key).partsel)
-                    {                         
+            $(this.settings.userSpendings).each(function (e, v) {
+                if ($(this).val() != "") {
+                    let nodeData = $.Calculator.GetInflactionValue($(this).data('node'));
+                    let val = $.Calculator.GetPlainNuber($(this).val());
+
+                    if (nodeData.key.length < 3) {
+                        let sp = $.Calculator.GetChildSpending(nodeData.key);
+                        val = Math.max(0, val - sp);
+                    }
+
+                    if ($.ui.fancytree
+                        .getTree($.Calculator.settings.tree)
+                        .getNodeByKey(nodeData.key).partsel) {
                         checkedBudget += val;
                     }
-                budget += val;
-                tempData.push({
-                    node: nodeData.key,
-                    inf: parseFloat(nodeData.infla),
-                    weight: 0,
-                    checked: 0,
-                    spending: val,
-                    text: ''
-                });
-            }
-        });
+                    budget += val;
+                    tempData.push({
+                        node: nodeData.key,
+                        inf: parseFloat(nodeData.infla),
+                        weight: 0,
+                        checked: 0,
+                        spending: val,
+                        text: ''
+                    });
+                }
+            });
 
-        //lets recalc the groups
-        //1 if a group is filled without children filled, then we are fine
-        //2 if a group is filled with children filled: - IS it smaller than the child sum? -> y -> round up group but ignore its inflation
-        //                                                                                    n -> the group should be sum() - value 
-        //3 if a group is not filled and children are, then calc the group but dont use its value.
-    /*    tempData.forEach(x => {
-            if(x.node.length == 3){ 
-                let p =[ x.node.substring(0,1), x.node.substring(0,2) ];
-                p.forEach(y => {
-                    let childSpending =  $.Calculator.GetChildSpending(y);
-                    let yData = tempData.find(q => q.node == y);
-                    let ownSpending = $.Calculator.GetNodeSpending(y);
-                    
-                    if(ownSpending < childSpending){
-                        $.Calculator.SetNodeSpending(y, childSpending)
-                    }
-
-                    if(yData == null)
-                    {    
-                        yData = {
-                            node: y,
-                            inf: $.ui.fancytree
-                            .getTree($.Calculator.settings.tree)
-                            .getNodeByKey(y).data.infla,
-                            weight: 0,
-                            checked: 0,
-                            spending: childSpending,
-                            text: ''
-                        };
-                        tempData.push(yData);                         
-                    }
-                    else {
-                        yData.spending = ownSpending < childSpending ? childSpending : ownSpending;
-                    }
-                   
-                });
-            }
-            
-        });
-*/
-        let untouchedBudget = budget;
-        let ubudget = $($.Calculator.settings.userBudget);
-        if (ubudget.data('manuallyChanged') == 0) {
-            ubudget.val(budget);
-            $.Calculator.FormatNumber(ubudget)
-        }
-        else {
-            budget = $.Calculator.GetPlainNuber($($.Calculator.settings.userBudget).val());
-        }
-
-        let checkedInflaHelper = 0;
-        let InflaHelper = 0;
-
-
-        tempData.forEach(x => {
-            x.weight = $.Calculator.kshRound(100 * x.spending / budget, 2);
-            let nodeEach = $.ui.fancytree
-                .getTree($.Calculator.settings.tree)
-                .getNodeByKey("" + x.node + "");
-            x.text = nodeEach.title;
-            x.checked = nodeEach.partsel ? 1 : 0;
-
-            InflaHelper += x.weight / 100 * x.inf;
-            if (x.checked) {
-                let tempval =  (Math.round(1000 * x.spending / checkedBudget) / 1000) * x.inf;
-                checkedInflaHelper += tempval;                
-            }
-
-            $(nodeEach
-                .tr)
-                .find($.Calculator.settings.userWeight)
-                .text(this.kshRound(x.weight, 2))
-
-            let newrow = $($.Calculator.settings.budget)
-                .find('.clone')
-                .clone();
-
-            newrow
-                .removeClass('clone')
-                .show();
-
-            newrow.find('td')
-                .eq(0)
-                .html("<a onclick='$.Calculator.ScrollToNode(" + x.node + ")'>" + x.text + "</a>");
-
-            newrow.find('td')
-                .eq(1)
-                .html(x.spending);
-
-            $.Calculator.FormatNumber(newrow.find('td').eq(1), 1)
-
-            newrow.find('td')
-                .eq(2)
-                .html(this.kshRound(x.weight, 2));
-
-            newrow.find('td')
-                .eq(3)
-                .html(x.inf);
-
-            $($.Calculator.settings.budget + " tbody")
-                .append(newrow)
-
-        });
-
-
-        $('#inflacio3').html(this.kshRound(InflaHelper, 1))
-        $('#inflacio4').html(this.kshRound(checkedInflaHelper, 1))
-
-        $('#inflacio5').html(this.kshRound(((InflaHelper / 100) - 1) * untouchedBudget, 0))
-        $('#inflacio6').html(this.kshRound(((checkedInflaHelper / 100) - 1) * checkedBudget, 0))
+            //lets recalc the groups
+            //1 if a group is filled without children filled, then we are fine
+            //2 if a group is filled with children filled: - IS it smaller than the child sum? -> y -> round up group but ignore its inflation
+            //                                                                                    n -> the group should be sum() - value 
+            //3 if a group is not filled and children are, then calc the group but dont use its value.
+            /*    tempData.forEach(x => {
+                    if(x.node.length == 3){ 
+                        let p =[ x.node.substring(0,1), x.node.substring(0,2) ];
+                        p.forEach(y => {
+                            let childSpending =  $.Calculator.GetChildSpending(y);
+                            let yData = tempData.find(q => q.node == y);
+                            let ownSpending = $.Calculator.GetNodeSpending(y);
+                            
+                            if(ownSpending < childSpending){
+                                $.Calculator.SetNodeSpending(y, childSpending)
+                            }
         
-        $.Calculator.FormatNumber($('#inflacio5'), 1)        
-        $.Calculator.FormatNumber($('#inflacio6'), 1)
-    },
+                            if(yData == null)
+                            {    
+                                yData = {
+                                    node: y,
+                                    inf: $.ui.fancytree
+                                    .getTree($.Calculator.settings.tree)
+                                    .getNodeByKey(y).data.infla,
+                                    weight: 0,
+                                    checked: 0,
+                                    spending: childSpending,
+                                    text: ''
+                                };
+                                tempData.push(yData);                         
+                            }
+                            else {
+                                yData.spending = ownSpending < childSpending ? childSpending : ownSpending;
+                            }
+                           
+                        });
+                    }
+                    
+                });
+        */
+            let untouchedBudget = budget;
+            let ubudget = $($.Calculator.settings.userBudget);
+            if (ubudget.data('manuallyChanged') == 0) {
+                ubudget.val(budget);
+                $.Calculator.FormatNumber(ubudget)
+            }
+            else {
+                budget = $.Calculator.GetPlainNuber($($.Calculator.settings.userBudget).val());
+            }
+
+            let checkedInflaHelper = 0;
+            let InflaHelper = 0;
+
+
+            tempData.forEach(x => {
+                x.weight = $.Calculator.kshRound(100 * x.spending / budget, 2);
+                let nodeEach = $.ui.fancytree
+                    .getTree($.Calculator.settings.tree)
+                    .getNodeByKey("" + x.node + "");
+                x.text = nodeEach.title;
+                x.checked = nodeEach.partsel ? 1 : 0;
+
+                InflaHelper += x.weight / 100 * x.inf;
+                if (x.checked) {
+                    let tempval = (Math.round(1000 * x.spending / checkedBudget) / 1000) * x.inf;                    
+                    checkedInflaHelper += tempval;
+                }
+
+                $(nodeEach
+                    .tr)
+                    .find($.Calculator.settings.userWeight)
+                    .text(this.kshRound(x.weight, 2))
+
+                let newrow = $($.Calculator.settings.budget)
+                    .find('.clone')
+                    .clone();
+
+                newrow
+                    .removeClass('clone')
+                    .show();
+
+                newrow.find('td')
+                    .eq(0)
+                    .html("<a onclick='$.Calculator.ScrollToNode(" + x.node + ")'>" + x.text + "</a>");
+
+                newrow.find('td')
+                    .eq(1)
+                    .html(x.spending);
+
+                $.Calculator.FormatNumber(newrow.find('td').eq(1), 1)
+
+                newrow.find('td')
+                    .eq(2)
+                    .html(this.kshRound(x.weight, 2));
+
+                newrow.find('td')
+                    .eq(3)
+                    .html(x.inf);
+
+                $($.Calculator.settings.budget + " tbody")
+                    .append(newrow)
+
+            });
+
+
+            $('#inflacio3').html(this.kshRound(InflaHelper, 1))
+            $('#inflacio4').html(this.kshRound(checkedInflaHelper, 1))
+
+            $('#inflacio5').html(this.kshRound(((InflaHelper / 100) - 1) * untouchedBudget, 0))
+            $('#inflacio6').html(this.kshRound(((checkedInflaHelper / 100) - 1) * checkedBudget, 0))
+
+            $.Calculator.FormatNumber($('#inflacio5'), 1)
+            $.Calculator.FormatNumber($('#inflacio6'), 1)
+        },
+
         this.CalcKshInflations = function () {
             let fullWeight = 0;
             let fullInf = 0;
@@ -447,17 +492,17 @@
                 if (node.key.length == 3) {
                     if (node.partsel) {
                         CheckedWeight += node.data.suly;
-                        CheckedInf += node.data.suly * parseFloat(node.data.infla)
+                        CheckedInf += node.data.suly * parseFloat(node.data.kshinfla)
                     }
 
-                    fullInf += node.data.suly * parseFloat(node.data.infla)
+                    fullInf += node.data.suly * parseFloat(node.data.kshinfla)
                     fullWeight += node.data.suly;
                 }
                 return node;
             });
 
             let kshInflation = this.kshRound(fullInf / fullWeight, 1);
-            let kshCheckedInflation = this.kshRound(fullInf / fullWeight, 1);
+            let kshCheckedInflation = this.kshRound(CheckedInf / CheckedWeight, 1);
             $('#inflacio1').html(kshInflation);
             $('#inflacio2').html(kshCheckedInflation);
 
