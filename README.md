@@ -1,8 +1,9 @@
  # inflation-calc
 fun project with weighted inflation
 
-#Adatforrás változtatás
-Jelenleg a projekta főmappában tölti be a következő fájlt: 	***3_6_2h.csv	***
+# Adatforrás változtatás
+
+Jelenleg a projekt a főmappából tölti be a következő fájlt: 	***3_6_2h.csv	***
 Pontosvesszővel tagolt CSV ami 4 oszlopot vár:
 1. **Kód**
 
